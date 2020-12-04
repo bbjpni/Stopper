@@ -4,16 +4,12 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class Stopper extends JFrame {
     JPanel mainPanel;
     JLabel szamlap;
     JButton start, time;
-    Timer ido;
-    TimerTask muvelet;
-    int x = 0;
+    int passing, p, mp, szmp;
 
     public Stopper(){
         init();
@@ -25,6 +21,8 @@ public class Stopper extends JFrame {
         this.setLocationRelativeTo(null);
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         this.setLayout(null);
+
+        passing = 0;
 
         start = new JButton("Start");
         start.setBounds(20,20,150,30);
@@ -44,17 +42,26 @@ public class Stopper extends JFrame {
         start.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                ido = new Timer();
-                muvelet = new TimerTask(){
-                    public void run(){
-                        x ++;
-                        szamlap.setText(x+"");
-                    }
-                };
-                //ido.schedule(muvelet.run(),);
+                start();
             }
         });
 
         this.setVisible(true);
+    }
+
+    Timer t = new Timer(1, new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            passing=passing+1000;
+            p=(passing/60000)%60;
+            mp=(passing/99000)%60;
+            szmp=(passing/1000)%100;
+            szamlap.setText(String.format("%02d",p)+":"+String.format("%02d",mp)+"."+String.format("%03d",szmp));
+
+        }
+    });
+
+    private void start(){
+        t.start();
     }
 }
