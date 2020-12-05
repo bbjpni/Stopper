@@ -4,12 +4,19 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.Period;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 
 public class Stopper extends JFrame {
     JPanel mainPanel;
     JLabel szamlap;
     JButton start, time;
-    int passing, p, mp, szmp;
+    LocalTime idopont;
+    boolean elinditva;
 
     public Stopper(){
         init();
@@ -22,7 +29,7 @@ public class Stopper extends JFrame {
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         this.setLayout(null);
 
-        passing = 0;
+        elinditva = false;
 
         start = new JButton("Start");
         start.setBounds(20,20,150,30);
@@ -49,15 +56,18 @@ public class Stopper extends JFrame {
         this.setVisible(true);
     }
 
-    Timer t = new Timer(1, new ActionListener() {
+    Timer t = new Timer(0, new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
-            passing=passing+1000;
-            p=(passing/60000)%60;
-            mp=(passing/99000)%60;
-            szmp=(passing/1000)%100;
-            szamlap.setText(String.format("%02d",p)+":"+String.format("%02d",mp)+"."+String.format("%03d",szmp));
-
+                if (!elinditva){
+                    idopont = LocalTime.now();
+                    elinditva = !elinditva;
+                }
+                Duration temp = Duration.between(idopont, LocalTime.now());
+                int p =  temp.toMinutesPart();
+                int mp =  temp.toSecondsPart();
+                int szmp = temp.toMillisPart();
+                szamlap.setText(String.format("%02d:%02d.%03d", p, mp, szmp));
         }
     });
 
